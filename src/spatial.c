@@ -6,11 +6,14 @@
 /* functions for calculating spatial clusters and their properties by thresholding a statistic map/image. A neighbouthood matrix nmat is used to determine connectivity. */
 
 
-void twovoxtyp(Sint*, Sint*, Sint*, Sint*, Sint*); 
+//void twovoxtyp(Sint*, Sint*, Sint*, Sint*, Sint*); 
+void twovoxtyp(short int*, short int*, short int*, short int*, short int*); 
 
 
-void cluster_mass(float *array, Sint *array_dim, Sint *nmat, Sint *nmat_dim,
-float *thresh_value, Sint *ans, float *ans1){
+//void cluster_mass(float *array, Sint *array_dim, Sint *nmat, Sint *nmat_dim,
+//float *thresh_value, Sint *ans, float *ans1){
+void cluster_mass(float *array, short int *array_dim, short int *nmat, short int *nmat_dim,
+float *thresh_value, short int *ans, float *ans1){
 
   /* thresholds a 3D array and calculates the number of clusters, the maximum entry in each cluster and the mass above the threshold of each cluster
      
@@ -24,7 +27,8 @@ float *thresh_value, Sint *ans, float *ans1){
  
  
   int i,j,k,num=0,n,row,comp,clust_num;
-  Sint *vox_mat,*vox_rel,x,y,z,t;  
+  //Sint *vox_mat,*vox_rel,x,y,z,t; 
+  short int *vox_mat,*vox_rel,x,y,z,t; 
   float *vox_mat_vals;
   
   
@@ -33,8 +37,10 @@ float *thresh_value, Sint *ans, float *ans1){
  y= *(array_dim+1);
  z= *(array_dim+2);
 
- vox_mat=Calloc(3,Sint);
- vox_mat_vals=Calloc(1,float);
+ //vox_mat=Calloc(3,Sint);
+ //vox_mat_vals=Calloc(1,float);
+ vox_mat=(short int*)calloc(3,sizeof(short int));
+ vox_mat_vals=(float*)calloc(1,sizeof(float));
 
 
  for(i=0;i<x;i++){
@@ -43,12 +49,14 @@ float *thresh_value, Sint *ans, float *ans1){
 	
 	if(*(array+i*y*z+j*z+k)>*thresh_value){
 
-	  vox_mat=Realloc(vox_mat,3*(num+1),Sint);
-	  vox_mat_vals=Realloc(vox_mat_vals,(num+1),float);
+	  //vox_mat=Realloc(vox_mat,3*(num+1),Sint);
+	  //vox_mat_vals=Realloc(vox_mat_vals,(num+1),float);
+	  vox_mat=(short int*)realloc(vox_mat,3*(num+1)*sizeof(short int));
+	  vox_mat_vals=(float*)realloc(vox_mat_vals,(num+1)*sizeof(float));
 	  
-	  *(vox_mat+num*3)=(Sint) i+1;
-	  *(vox_mat+num*3+1)=(Sint) j+1;
-	  *(vox_mat+num*3+2)=(Sint) k+1;
+	  *(vox_mat+num*3)=(short int) i+1;
+	  *(vox_mat+num*3+1)=(short int) j+1;
+	  *(vox_mat+num*3+2)=(short int) k+1;
 	  *(vox_mat_vals+num)=*(array+i*y*z+j*z+k);
 	  num+=1;
 	 
@@ -58,7 +66,8 @@ float *thresh_value, Sint *ans, float *ans1){
  }
  
     if(num>0){
-	vox_rel=Calloc(num*num,Sint);
+	//vox_rel=Calloc(num*num,Sint);
+  vox_rel=(short int*)calloc(num*num,sizeof(short int));
 	
 	for(i=0;i<(num-1);i++){
 	  for(j=i+1;j<num;j++){
@@ -94,7 +103,8 @@ float *thresh_value, Sint *ans, float *ans1){
 		for(i=0;i<num*(n-row);i++) *(vox_rel+(row-1)*num+i)=*(vox_rel+(row)*num+i);
 	  
 		n-=1;
-		vox_rel=Realloc(vox_rel,num*n,Sint);
+		//vox_rel=Realloc(vox_rel,num*n,Sint);
+		vox_rel=(short int*)realloc(vox_rel,num*n*sizeof(short int));
 		comp=0;
 	      }
 	    else { comp-=1;}
@@ -102,11 +112,11 @@ float *thresh_value, Sint *ans, float *ans1){
 	    }
 	  row-=1;}  
     
-	*ans=(Sint) n;
+	*ans=(short int) n;
 	
 	for(i=0;i<n;i++){
 	  for(j=0;j<num;j++){
-	    if(*(vox_rel+i*num+j)>0) *(vox_rel+i*num+j)=(Sint) i+1;
+	    if(*(vox_rel+i*num+j)>0) *(vox_rel+i*num+j)=(short int) i+1;
 	  }
 	}
 
@@ -151,22 +161,22 @@ float *thresh_value, Sint *ans, float *ans1){
 	
 
        
-	Free(vox_rel);
+	free(vox_rel);
     } else { *ans =0;}
 
-	Free(vox_mat);
-	Free(vox_mat_vals);
+	free(vox_mat);
+	free(vox_mat_vals);
 } 
 
 
 
-void twovoxtyp(Sint *voxel1, Sint *voxel2, Sint *nmat, Sint *nmat_dim, Sint *ans){ 
+void twovoxtyp(short int *voxel1, short int *voxel2, short int *nmat, short int *nmat_dim, short int *ans){ 
 /* tests whether two voxels are neighbours using neighbourhood matrix nmat */
 
 
   int i;
-  Sint *dif; 
-  dif=Calloc(3,Sint); 
+  short int *dif; 
+  dif=(short int*)calloc(3,sizeof(short int)); 
  
   *ans=0;
  
@@ -182,7 +192,7 @@ void twovoxtyp(Sint *voxel1, Sint *voxel2, Sint *nmat, Sint *nmat_dim, Sint *ans
  
   else i+=1; 
   while (i<*nmat_dim); 
-  Free(dif); 
+  free(dif); 
 } 
 
 void covariance_est(double *array, int *array_dim, int *mask, int *nmat, int *nmat_dim, double *ans){
