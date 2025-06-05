@@ -1,5 +1,6 @@
-#include <S.h>
+//#include <S.h>
 #include "verR.h"
+#include <R.h>
 #include <math.h>
 
 /*functions that apply non-linear gaussian weighted smoothing to
@@ -11,14 +12,14 @@ void non_lin_gauss_smooth(float *array, Sint *array_dim, float *mask, float *rad
 /* spatial smoothing using a gaussian kernel with sd=g to supply the weights */
 
   int i,j,k,l,i1,j1,k1,nk,*u;
-  Sint x,y,z;
+  short int x,y,z;
   float f=0.0,total=0.0,a,b,c,dist,yi,yj;
 
  x= *(array_dim);
  y= *(array_dim+1);
  z= *(array_dim+2);
 
- u=Calloc(3,int);
+ u=(int *)calloc(3,sizeof(int));
  nk=0;
  for(i=-19;i<20;i++){
    for(j=-19;j<20;j++){
@@ -33,13 +34,13 @@ void non_lin_gauss_smooth(float *array, Sint *array_dim, float *mask, float *rad
 	 *(u+3*nk+1)=j;
 	 *(u+3*nk+2)=k;
 	 nk+=1;
-	 u=Realloc(u,3*(nk+1),int);
+	 u=(int *)realloc(u,3*(nk+1)*sizeof(int));
        }
      }
    }
  }
 
- u=Realloc(u,3*nk,int);
+ u=(int *)realloc(u,3*nk*sizeof(int));
 
  for(i=0;i<x;i++){
    for(j=0;j<y;j++){
@@ -78,7 +79,7 @@ void temporal_non_lin_gauss_smooth(float *array, Sint *array_dim, float *mask, f
 
   /*smooths time-series spatially based on sums of squared differences in pairs of time-series*/
   int i,j,k,l,m,n,i1,j1,k1,nk,*u;
-  Sint x,y,z,t;
+  short int x,y,z,t;
   float f=0.0,a,b,c,dist,temp;
 
  x= *(array_dim);
@@ -86,7 +87,7 @@ void temporal_non_lin_gauss_smooth(float *array, Sint *array_dim, float *mask, f
  z= *(array_dim+2);
  t= *(array_dim+3);
 
- u=Calloc(3,int);
+ u=(int *)calloc(3,sizeof(int));
  nk=0;
  for(i=-19;i<20;i++){
    for(j=-19;j<20;j++){
@@ -101,13 +102,13 @@ void temporal_non_lin_gauss_smooth(float *array, Sint *array_dim, float *mask, f
 	 *(u+3*nk+1)=j;
 	 *(u+3*nk+2)=k;
 	 nk+=1;
-	 u=Realloc(u,3*(nk+1),int);
+	 u=(int *)realloc(u,3*(nk+1)*sizeof(int));
        }
      }
    }
  }
 
- u=Realloc(u,3*nk,int);
+ u=(int *)realloc(u,3*nk*sizeof(int));
 
  for(i=0;i<x;i++){
    for(j=0;j<y;j++){
